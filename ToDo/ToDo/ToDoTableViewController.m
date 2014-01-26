@@ -69,6 +69,7 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    NSLog(@"cellForRowAtIndexPath!!!");
     static NSString *CellIdentifier = @"EditableCell";
     EditableCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
     cell.tag = indexPath.row;
@@ -80,8 +81,7 @@
     
     [cell.toDoItem becomeFirstResponder];
     cell.toDoItem.delegate = self;
-    //    self.rowSelected = indexPath.row;
-    
+    self.rowSelected = indexPath.row;
     
     return cell;
 }
@@ -111,54 +111,62 @@
     
     if(tempArray != nil){
         NSMutableArray *array = [NSMutableArray arrayWithArray:[[NSUserDefaults standardUserDefaults] objectForKey:@"toDoItems"]];
-        for (NSString *item in array) {
-            NSLog(@"loading item [%@]", item);
-        }
         self.toDoItems = array;
     }
     
     [self.tableView reloadData];
 }
 
+//- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+//	
+//	NSString *myString = [self.toDoItems objectAtIndex:indexPath.row];
+//	
+//	UITextView *textView = [[UITextView alloc] init];
+//	[textView setAttributedText:[[NSAttributedString alloc] initWithString:myString]];
+//	
+//	CGRect screenRect = [[UIScreen mainScreen] bounds];
+//	//CGFloat width = [self isPortraitOrientation] ? screenRect.size.width : screenRect.size.height;
+//	CGFloat width = screenRect.size.width;
+//	width -= 64;
+//	
+//	CGRect textRect = [textView.text boundingRectWithSize:CGSizeMake(width, MAXFLOAT)
+//												  options:NSStringDrawingUsesLineFragmentOrigin
+//											   attributes:@{NSFontAttributeName:[UIFont systemFontOfSize:17]}
+//												  context:nil];
+//	
+//	return textRect.size.height + 20;
+//}
+
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     
-    NSString *myString = [self.toDoItems objectAtIndex:indexPath.row];
-    CGSize boundingSize = CGSizeMake(320, 115);
+    NSLog(@"heightForRowAtIndexPath!!!!");
+    
+    UITextView *textView = [[UITextView alloc] init];
+    NSString *theText = [self.toDoItems objectAtIndex:indexPath.row];
+    [textView setAttributedText:[[NSAttributedString alloc] initWithString:theText]];
+
+    CGRect screenRect = [[UIScreen mainScreen] bounds];
+    CGFloat width = screenRect.size.width;
+    width -= 64;
+    
     UIFont *font = [UIFont fontWithName:@"Helvetica Neue" size:14];
-    CGRect textRect = [myString boundingRectWithSize:boundingSize options:NSStringDrawingUsesFontLeading attributes:@{NSFontAttributeName:font}context:nil];
+    CGRect textRect = [theText boundingRectWithSize:CGSizeMake(width, MAXFLOAT) options:NSStringDrawingUsesFontLeading attributes:@{NSFontAttributeName:font}context:nil];
     
-    return textRect.size.height + 30;
+    CGFloat h = textRect.size.height + 30;
     
-    //    CGFloat width = screenRect.size.height;
-    //    CGRect textRect = [myString boundingRectWithSize:CGSizeMake(width, MAXFLOAT) options:NSStringDrawingUsesLineFragmentOrigin
-    //                                               attributes:@{NSFontAttributeName:[UIFont systemFontOfSize:14]}
-    //                                                  context:nil];
-    //
+    NSLog(@"returning %f", h);
+    return h;
     
-    
-    //    NSAttributedString *theText=[self.toDoItems objectAtIndex: indexPath.row] ;
-    //    NSInteger labelWidth = self.tableView.bounds.size.width - 10;
-    //
-    ////   CGSize textSize = [theText sizeWithFont:[UIFont fontWithName: @"HelveticaNeue" size: 14.0f] constrainedToSize:CGSizeMake(labelWidth, MAXFLOAT) ];
-    //
-    //    CGRect rectSize = [theText boundingRectWithSize:CGSizeMake(labelWidth, MAXFLOAT) options:NSStringDrawingUsesLineFragmentOrigin context:NULL];
-    //
-    //    return rectSize.size.height+10;
-    
-    
-    //    NSString *theText=[self.toDoItems objectAtIndex: indexPath.row] ;
-    //    NSDictionary *attributes = @{NSFontAttributeName: [UIFont fontWithName:@"HelveticaNeue" size:14]};
-    //    CGSize expectedTextSize = [theText sizeWithAttributes:attributes];
-    //
-    //    CGRect rectSize = [theText boundingRectWithSize:CGSizeMake(labelWidth, MAXFLOAT) options:NSStringDrawingUsesLineFragmentOrigin context:NULL];
-    //    return expectedTextSize.height;
-    //
-    //    CGSize labelSize = [theText sizeWithFont:[UIFont fontWithName: @"HelveticaNeue" size: 14.0f] constrainedToSize:kLabelFrameMaxSize];
-    //    return kHeightWithoutLabel+labelSize.height;
+}
+
+-(BOOL)textViewShouldBeginEditing:(UITextView *)textView {
+	
+    //NSLog(@"In textFieldShouldBeginEditing");
+	
+	return YES;
 }
 
 -(void)addItem:(NSString *)item{
-    NSLog(@"am gonna add an item now");
     
     [self.toDoItems addObject:@""];
     
@@ -207,19 +215,49 @@
 }
 
 
+//- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text{
+//	NSLog(@"In shouldChangeTextInRange");
+//    NSCharacterSet *doneButtonCharacterSet = [NSCharacterSet newlineCharacterSet];
+//    NSRange replacementTextRange = [text rangeOfCharacterFromSet:doneButtonCharacterSet];
+//    NSUInteger location = replacementTextRange.location;
+//    if (location != NSNotFound){
+//		
+//		[self.toDoItems replaceObjectAtIndex:textView.tag withObject:textView.text];
+//		[[NSUserDefaults standardUserDefaults] setObject:self.toDoItems forKey:@"toDoItems"];
+//		[[NSUserDefaults standardUserDefaults] synchronize];
+//		[textView resignFirstResponder];
+//		
+//		[self.tableView reloadData];
+//		
+//		return YES;
+//    } else {
+//		[self.toDoItems replaceObjectAtIndex:textView.tag withObject:textView.text];
+//		[[NSUserDefaults standardUserDefaults] setObject:self.toDoItems forKey:@"toDoItems"];
+//		[[NSUserDefaults standardUserDefaults] synchronize];
+//		[self.tableView beginUpdates];
+//		[self.tableView endUpdates];
+//        
+//	}
+//	
+//	
+//    return YES;
+//}
+
 //Method I get called back whenever soemthing is about to be edited
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text{
     
     NSString *text1 = [textView.text stringByReplacingCharactersInRange:range withString:text];
     //this is where i would put in validation if I wouldn't want the user to type in certain things
     
-    NSLog(@"Pia, the text is %@", text1);
    	[self.toDoItems replaceObjectAtIndex:textView.tag withObject:text1];
-    NSLog(@"Pia, replacing the object now");
-    
     [[NSUserDefaults standardUserDefaults] setObject:self.toDoItems forKey:@"toDoItems"];
     [[NSUserDefaults standardUserDefaults] synchronize];
     
+    [self.tableView beginUpdates];
+    [self.tableView endUpdates];
+    
+    [self.tableView reloadData];
+
     return YES;
 }
 
