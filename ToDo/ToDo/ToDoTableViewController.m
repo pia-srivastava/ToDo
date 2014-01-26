@@ -80,8 +80,8 @@
     
     [cell.toDoItem becomeFirstResponder];
     cell.toDoItem.delegate = self;
-//    self.rowSelected = indexPath.row;
-
+    //    self.rowSelected = indexPath.row;
+    
     
     return cell;
 }
@@ -95,8 +95,6 @@
 
 #pragma custom methods
 - (void)loadInitialData {
-    //[self.toDoItems addObject:@"do homework"];
-    //[self.toDoItems addObject:@"have fun"];
     
     //Parse retrieval
     //    PFQuery *query = [PFQuery queryWithClassName:@"ToDo"];
@@ -122,18 +120,42 @@
     [self.tableView reloadData];
 }
 
-//- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-//    NSString *theText=[self.toDoItems objectAtIndex: indexPath.row] ;
-//    NSDictionary *attributes = @{NSFontAttributeName: [UIFont fontWithName:@"HelveticaNeue" size:14]};
-//    CGSize expectedTextSize = [theText sizeWithAttributes:attributes];
-//    
-////    boundingRectWithSize
-//    
-//    return expectedTextSize.height;
-//    
-////    CGSize labelSize = [theText sizeWithFont:[UIFont fontWithName: @"HelveticaNeue" size: 14.0f] constrainedToSize:kLabelFrameMaxSize];
-////    return kHeightWithoutLabel+labelSize.height;
-//}
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    NSString *myString = [self.toDoItems objectAtIndex:indexPath.row];
+    CGSize boundingSize = CGSizeMake(320, 115);
+    UIFont *font = [UIFont fontWithName:@"Helvetica Neue" size:14];
+    CGRect textRect = [myString boundingRectWithSize:boundingSize options:NSStringDrawingUsesFontLeading attributes:@{NSFontAttributeName:font}context:nil];
+    
+    return textRect.size.height + 30;
+    
+    //    CGFloat width = screenRect.size.height;
+    //    CGRect textRect = [myString boundingRectWithSize:CGSizeMake(width, MAXFLOAT) options:NSStringDrawingUsesLineFragmentOrigin
+    //                                               attributes:@{NSFontAttributeName:[UIFont systemFontOfSize:14]}
+    //                                                  context:nil];
+    //
+    
+    
+    //    NSAttributedString *theText=[self.toDoItems objectAtIndex: indexPath.row] ;
+    //    NSInteger labelWidth = self.tableView.bounds.size.width - 10;
+    //
+    ////   CGSize textSize = [theText sizeWithFont:[UIFont fontWithName: @"HelveticaNeue" size: 14.0f] constrainedToSize:CGSizeMake(labelWidth, MAXFLOAT) ];
+    //
+    //    CGRect rectSize = [theText boundingRectWithSize:CGSizeMake(labelWidth, MAXFLOAT) options:NSStringDrawingUsesLineFragmentOrigin context:NULL];
+    //
+    //    return rectSize.size.height+10;
+    
+    
+    //    NSString *theText=[self.toDoItems objectAtIndex: indexPath.row] ;
+    //    NSDictionary *attributes = @{NSFontAttributeName: [UIFont fontWithName:@"HelveticaNeue" size:14]};
+    //    CGSize expectedTextSize = [theText sizeWithAttributes:attributes];
+    //
+    //    CGRect rectSize = [theText boundingRectWithSize:CGSizeMake(labelWidth, MAXFLOAT) options:NSStringDrawingUsesLineFragmentOrigin context:NULL];
+    //    return expectedTextSize.height;
+    //
+    //    CGSize labelSize = [theText sizeWithFont:[UIFont fontWithName: @"HelveticaNeue" size: 14.0f] constrainedToSize:kLabelFrameMaxSize];
+    //    return kHeightWithoutLabel+labelSize.height;
+}
 
 -(void)addItem:(NSString *)item{
     NSLog(@"am gonna add an item now");
@@ -150,33 +172,6 @@
     
 }
 
-
-//-(BOOL)textFieldShouldBeginEditing:(UITextField *)textField {
-//    
-//    NSLog(@"In textFieldShouldBeginEditing");
-//    
-//	return NO;
-//}
-//
-//- (BOOL)textFieldShouldReturn:(UITextField *)textField {
-//	
-//	NSLog(@"Textfield.text = %@", textField.text);
-//	NSLog(@"Row.selected = %u", self.rowSelected);
-//	[self.toDoItems replaceObjectAtIndex:self.rowSelected withObject:textField.text];
-//    
-//    //save the item to Parse
-//    PFObject *testObject = [PFObject objectWithClassName:@"ToDo"];
-//    testObject[@"toDoItemValue"] = textField.text;
-//    [testObject saveInBackground];
-//    
-//    //save item to NSUserDefault
-//    [[NSUserDefaults standardUserDefaults] setObject:self.toDoItems forKey:@"toDoItems"];
-//    [[NSUserDefaults standardUserDefaults] synchronize];
-//
-//    [textField resignFirstResponder];
-//    return YES;
-//}
-
 // Override to support editing the table view.
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -187,7 +182,7 @@
         
         [[NSUserDefaults standardUserDefaults] setObject:self.toDoItems forKey:@"toDoItems"];
         [[NSUserDefaults standardUserDefaults] synchronize];
-
+        
     }
     else if (editingStyle == UITableViewCellEditingStyleInsert) {
         // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
@@ -199,12 +194,12 @@
 {
 }
 
- // Override to support conditional rearranging of the table view.
- - (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
- {
- // Return NO if you do not want the item to be re-orderable.
-     return YES;
- }
+// Override to support conditional rearranging of the table view.
+- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    // Return NO if you do not want the item to be re-orderable.
+    return YES;
+}
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView{
     [self.tableView endEditing:YES];
@@ -224,7 +219,7 @@
     
     [[NSUserDefaults standardUserDefaults] setObject:self.toDoItems forKey:@"toDoItems"];
     [[NSUserDefaults standardUserDefaults] synchronize];
-        
+    
     return YES;
 }
 
