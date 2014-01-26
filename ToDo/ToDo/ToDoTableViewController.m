@@ -76,10 +76,12 @@
     // Configure the cell...
     NSString *toDoItem = [self.toDoItems objectAtIndex:indexPath.row];
     cell.toDoItem.text = toDoItem;
+    cell.toDoItem.tag = indexPath.row;
     
     [cell.toDoItem becomeFirstResponder];
     cell.toDoItem.delegate = self;
-    self.rowSelected = indexPath.row;
+//    self.rowSelected = indexPath.row;
+
     
     return cell;
 }
@@ -120,6 +122,18 @@
     [self.tableView reloadData];
 }
 
+//- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+//    NSString *theText=[self.toDoItems objectAtIndex: indexPath.row] ;
+//    NSDictionary *attributes = @{NSFontAttributeName: [UIFont fontWithName:@"HelveticaNeue" size:14]};
+//    CGSize expectedTextSize = [theText sizeWithAttributes:attributes];
+//    
+////    boundingRectWithSize
+//    
+//    return expectedTextSize.height;
+//    
+////    CGSize labelSize = [theText sizeWithFont:[UIFont fontWithName: @"HelveticaNeue" size: 14.0f] constrainedToSize:kLabelFrameMaxSize];
+////    return kHeightWithoutLabel+labelSize.height;
+//}
 
 -(void)addItem:(NSString *)item{
     NSLog(@"am gonna add an item now");
@@ -205,14 +219,15 @@
     //this is where i would put in validation if I wouldn't want the user to type in certain things
     
     NSLog(@"Pia, the text is %@", text1);
-	[self.toDoItems replaceObjectAtIndex:self.rowSelected withObject:text1];
+   	[self.toDoItems replaceObjectAtIndex:textView.tag withObject:text1];
     NSLog(@"Pia, replacing the object now");
     
     [[NSUserDefaults standardUserDefaults] setObject:self.toDoItems forKey:@"toDoItems"];
     [[NSUserDefaults standardUserDefaults] synchronize];
-    
+        
     return YES;
 }
+
 /*
  #pragma mark - Navigation
  
